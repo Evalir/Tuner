@@ -1,3 +1,5 @@
+use clap::Parser;
+
 const NOTES: [&str; 12] = [
     "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
 ];
@@ -38,7 +40,22 @@ fn get_notes(root: &str, tuning: &Tuning) -> Vec<String> {
     notes
 }
 
+#[derive(Parser, Debug)]
+struct Args {
+    root: String,
+    #[arg(short = 'd', long)]
+    drop: bool,
+}
+
 fn main() {
-    let notes = get_notes("D", &Tuning::DropTuning);
+    let args = Args::parse();
+
+    let notes = get_notes(
+        &args.root,
+        match args.drop {
+            false => &Tuning::StandardTuning,
+            true => &Tuning::DropTuning,
+        },
+    );
     println!("{:?}", notes);
 }
